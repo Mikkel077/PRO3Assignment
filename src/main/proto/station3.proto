@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "via.pro3.grpcspringbootexample.grpc";
+
+
+message Product{
+  repeated string parts_included = 1;
+  repeated string ref_to_part = 2;
+  string product_reg = 3;
+  repeated string ref_to_animals = 4;
+}
+
+message ListOfAnimalRefs{
+  repeated string animal_ref = 1;
+}
+
+
+message ListOfProducts{
+  repeated Product products = 1;
+}
+
+service station3Service{
+  rpc getAllAnimalsByProduct(Product) returns (ListOfAnimalRefs);
+  rpc getAllProductsByAnimal(ListOfAnimalRefs) returns (ListOfProducts);
+}
