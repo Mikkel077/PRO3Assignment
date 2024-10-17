@@ -20,7 +20,11 @@ message ListOfProducts{
   repeated Product products = 1;
 }
 
+message AnimalRef{
+  string animal_ref = 1;
+}
+
 service station3Service{
   rpc getAllAnimalsByProduct(Product) returns (ListOfAnimalRefs);
-  rpc getAllProductsByAnimal(ListOfAnimalRefs) returns (ListOfProducts);
+  rpc getAllProductsByAnimal(AnimalRef) returns (ListOfProducts);
 }
