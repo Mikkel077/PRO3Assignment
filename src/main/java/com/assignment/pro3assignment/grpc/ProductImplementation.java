@@ -10,19 +10,12 @@ public class ProductImplementation extends station3ServiceGrpc.station3ServiceIm
     @Override
     public void getAllAnimalsByProduct(Product request, StreamObserver<ListOfAnimalRefs> responseObserver) {
 
-
-        //ListOfAnimalRefs response = ListOfAnimalRefs.newBuilder()
-
-        // responseObserver.onNext(response);
         responseObserver.onCompleted();
     }
 
     @Override
     public void getAllProductsByAnimal(AnimalRef animalRef, StreamObserver<ListOfProducts> responseObserver) {
 
-        //ListOfProducts response = ListOfProducts.newBuilder()
-
-        //responseObserver.onNext(response);
         responseObserver.onCompleted();
     }
 

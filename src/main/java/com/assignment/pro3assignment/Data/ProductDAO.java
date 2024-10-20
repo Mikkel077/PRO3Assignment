@@ -6,81 +6,70 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.sql.SQLException;
+import java.util.*;
 
 @Component
 public class ProductDAO implements Persistence {
 
-    @Value("${spring.datasource.url}")
-    private String dbUrl;
+    private DatabaseHelper<Product> dbHelper;
 
-    @Value("${spring.datasource.username}")
-    private String dbUser;
-
-    @Value("${spring.datasource.password}")
-    private String dbPassword;
-
-    private Connection connection;
-    private Statement statement;
-
-
-    @PostConstruct
-    private void connect() throws SQLException, java.sql.SQLException {
-        connection = DriverManager.getConnection(dbUrl, dbUser, dbPassword);
-        statement = connection.createStatement();
+    public ProductDAO(DatabaseHelper<Product> dbHelper) {
+        this.dbHelper = dbHelper;
     }
 
+
+    private Product createProduct(ResultSet rs) throws SQLException {
+        Array partsIncludedArray = rs.getArray("parts_included");
+        Array refToPartsArray = rs.getArray("ref_to_parts");
+        String productReg = rs.getString("product_reg");
+        Array refToAnimals = rs.getArray("ref_to_animals");
+
+        List<String> partsIncluded = new ArrayList<>();
+
+        if (partsIncludedArray != null) {
+            String[] partsArray = (String[]) partsIncludedArray.getArray();
+            partsIncluded = Arrays.asList(partsArray);
+        }
+
+        List<String> refToParts = new ArrayList<>();
+        if (refToPartsArray != null) {
+            String[] refToArray = (String[]) refToPartsArray.getArray();
+            refToParts = Arrays.asList(refToArray);
+        }
+
+        List<String> refToAnimal = new ArrayList<>();
+        if (refToAnimals != null) {
+            String[] refToArray = (String[]) refToAnimals.getArray();
+            refToAnimal = Arrays.asList(refToArray);
+        }
+
+        return new Product(partsIncluded, refToParts, productReg, refToAnimal);
+    }
+
+
     @Override
-    public List<String> getAllAnimalsByProduct(String productReg) {
-            String query = "SELECT ref_to_animals FROM product where product_reg = ?";
-
-
-        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
-            preparedStatement.setString(1, productReg);
-            ResultSet resultSet = preparedStatement.executeQuery();
+    public Collection<String> getAllAnimalsByProduct(String productReg) {
+        try {
+            List<Product> listOfProducts = dbHelper.map(this::createProduct, "SELECT * FROM product WHERE product_reg = ?", productReg);
 
             List<String> animals = new ArrayList<>();
-
-
-            while (resultSet.next()) {
-                Array refToAnimalsFromQuery = resultSet.getArray("ref_to_animals");
-                String[] refToAnimals = (String[]) refToAnimalsFromQuery.getArray();
-                animals.addAll(Arrays.asList(refToAnimals));
+            for (Product product : listOfProducts) {
+                animals.addAll(product.getRefToAnimals());
             }
+
             return animals;
-        } catch (java.sql.SQLException e) {
+
+        } catch (com.assignment.pro3assignment.Data.SQLException | SQLException e) {
             throw new RuntimeException(e);
         }
     }
 
     @Override
-    public List<com.assignment.pro3assignment.Model.Product> getAllProductsByAnimal(String animalRef) {
-        String query = "SELECT * FROM public.product WHERE ref_to_animals @> ARRAY['" + animalRef + "']";
-        List<com.assignment.pro3assignment.Model.Product> products = new ArrayList<>();
+    public Collection<Product> getAllProductsByAnimal(String animalRef) {
         try {
-
-            ResultSet resultSet = statement.executeQuery(query);
-
-
-            while (resultSet.next()) {
-                String productReg = resultSet.getString("product_reg"); // Ensure correct case
-                Array partsIncluded = resultSet.getArray("parts_included");
-                Array refToParts = resultSet.getArray("ref_to_parts");
-                Array refToAnimals = resultSet.getArray("ref_to_animals");
-
-                // Convert SQL arrays to List<String>
-                List<String> partsIncludedList = Collections.singletonList(String.valueOf(partsIncluded));
-                List<String> refToPartsList = Collections.singletonList(String.valueOf(refToParts));
-                List<String> refToAnimalsList = Collections.singletonList(String.valueOf(refToAnimals));
-
-                Product product = new Product(partsIncludedList, refToPartsList, productReg, refToAnimalsList);
-                products.add(product);
-            }
-            return products;
-        } catch (java.sql.SQLException e) {
+            return dbHelper.map(this::createProduct, "SELECT * FROM product WHERE animal_ref = ?", animalRef);
+        } catch (com.assignment.pro3assignment.Data.SQLException | SQLException e) {
             throw new RuntimeException(e);
         }
     }

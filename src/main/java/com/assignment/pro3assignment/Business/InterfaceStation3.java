@@ -1,6 +1,6 @@
 package com.assignment.pro3assignment.Business;
 
-import via.pro3.grpcspringbootexample.grpc.Product;
+import com.assignment.pro3assignment.Model.Product;
 
 import java.util.List;
 
