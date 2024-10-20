@@ -2,6 +2,7 @@ package com.assignment.pro3assignment.Business;
 
 import com.assignment.pro3assignment.Data.Persistence;
 import com.assignment.pro3assignment.Model.Product;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -17,8 +18,8 @@ public class Station3Impl implements InterfaceStation3 {
     }
 
     @Override
-    public List<String> getAllAnimalsByProduct(Product product) {
-        return (List<String>) persistence.getAllAnimalsByProduct(product.getProductReg());
+    public List<String> getAllAnimalsByProduct(String productReg) {
+        return (List<String>) persistence.getAllAnimalsByProduct(productReg);
     }
 
     @Override

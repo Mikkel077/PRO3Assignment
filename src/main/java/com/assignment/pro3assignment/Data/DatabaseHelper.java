@@ -13,9 +13,9 @@ public class DatabaseHelper<T> {
     private final String username;
     private final String password;
 
-    public DatabaseHelper(@Value("${jdbc.url}") String jdbcURL,
-                          @Value("${jdbc.username}") String username,
-                          @Value("${jdbc.password}") String password) throws SQLException {
+    public DatabaseHelper(@Value("${spring.datasource.url}") String jdbcURL,
+                          @Value("${spring.datasource.username}") String username,
+                          @Value("${spring.datasource.password}") String password) throws SQLException {
         this.jdbcURL = jdbcURL;
         this.username = username;
         this.password = password;

@@ -3,6 +3,7 @@ package com.assignment.pro3assignment.Data;
 import com.assignment.pro3assignment.Model.Product;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import java.sql.*;
@@ -10,6 +11,7 @@ import java.sql.SQLException;
 import java.util.*;
 
 @Component
+@Scope("singleton")
 public class ProductDAO implements Persistence {
 
     private DatabaseHelper<Product> dbHelper;
