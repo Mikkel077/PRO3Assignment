@@ -53,7 +53,7 @@ public class ProductDAO implements Persistence {
     @Override
     public Collection<String> getAllAnimalsByProduct(String productReg) {
         try {
-            List<Product> listOfProducts = dbHelper.map(this::createProduct, "SELECT * FROM product WHERE product_reg = ?", productReg);
+            List<Product> listOfProducts = dbHelper.map(this::createProduct, "SELECT * FROM products WHERE product_reg = ?", productReg);
 
             List<String> animals = new ArrayList<>();
             for (Product product : listOfProducts) {
@@ -70,7 +70,7 @@ public class ProductDAO implements Persistence {
     @Override
     public Collection<Product> getAllProductsByAnimal(String animalRef) {
         try {
-            return dbHelper.map(this::createProduct, "SELECT * FROM product WHERE animal_ref = ?", animalRef);
+            return dbHelper.map(this::createProduct,  "SELECT * FROM products WHERE ? = ANY(ref_to_animals)", animalRef);
         } catch (com.assignment.pro3assignment.Data.SQLException | SQLException e) {
             throw new RuntimeException(e);
         }
