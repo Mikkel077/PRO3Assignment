@@ -22,6 +22,10 @@ public class dbTest {
         ProductDAO productDAO1 = new ProductDAO(dbhelper);
         dbTest test = new dbTest(productDAO1);
 
-        test.test("P001");
+        Collection<String> animal = test.test("P003");
+
+        for (String element : animal) {
+            System.out.println(element);
+        }
     }
 }
